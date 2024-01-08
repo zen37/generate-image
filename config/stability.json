@@ -1,0 +1,9 @@
+{
+    "endpoint_translator": "https://api.cognitive.microsofttranslator.com/translate",
+    "api_version_translator": "3.0",
+    "translate_from": "en",
+    "region": "westus3",
+    "endpoint_image": "https://learn-1223.openai.azure.com/openai/deployments/Dalle3/images/generations?",
+    "model_image": "dalle3",
+    "api_version_image": "2023-12-01-preview"
+}
