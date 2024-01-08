@@ -6,13 +6,13 @@ import os, logging
 
 from interface import ImageInterface
 from utils import get_api_key
-from constants import IMAGE_SERVICE
+from constants import IMAGE_SERVICE, FILE_NAME_SEP
 
 class StabilityImageService(ImageInterface):
     def __init__(self, config):
         self.api_key = get_api_key(IMAGE_SERVICE)
 
-    def create(self, text):
+    def create(self, text, filename_prefix):
         url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
         #logging.info("endpoint: %s", url)
 
@@ -55,5 +55,5 @@ class StabilityImageService(ImageInterface):
             os.makedirs("./out")
 
         for i, image in enumerate(data["artifacts"]):
-            with open(f'./files/images/stability_{image["seed"]}.png', "wb") as f:
+            with open(f'./files/images/{filename_prefix}{FILE_NAME_SEP}stability{FILE_NAME_SEP}{image["seed"]}.png', "wb") as f:
                 f.write(base64.b64decode(image["base64"]))
