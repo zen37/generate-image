@@ -18,7 +18,7 @@ def configure_logging():
 
     handlers = [
         logging.StreamHandler(), #if config.get("logging_to_console", True) else None,
-        logging.FileHandler("log.txt")  # Always add FileHandler
+        logging.FileHandler("logs/log.txt")  # Always add FileHandler
     ]
 
     handlers = [handler for handler in handlers if handler is not None]
@@ -87,7 +87,7 @@ def load_environment_variables():
                     key, value = line.strip().split('=', 1)
                     if service in SERVICE_KEY_MAPPING and key == SERVICE_KEY_MAPPING[service]:
                         os.environ[key] = value
- 
+
         except FileNotFoundError as e:
             logging.error("Environment file not found for %s: %s", service, e)
         except ValueError as e:
