@@ -1,19 +1,16 @@
 # azure.py
 
 from openai import AzureOpenAI
-import os
 import logging
-from datetime import datetime
 import requests
 from PIL import Image
 import json
 
 from interface import ImageInterface
 from constants import (
-    DIR_IMAGES, FORMAT_TIME, FILE_IMAGE_EXT,FILE_NAME_SEP, IMAGE_SERVICE,
-    DEFAULT_IMAGE_QUALITY, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_STYLE
+    IMAGE_SERVICE, DEFAULT_IMAGE_QUALITY, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_STYLE
 )
-from utils import get_api_key
+from utils import get_api_key, get_image_path
 
 class AzureImageService(ImageInterface):
     def __init__(self, config):
@@ -42,13 +39,9 @@ class AzureImageService(ImageInterface):
         return json.loads(result.model_dump_json())["data"][0]["url"]
 
     def _save_image(self, image_url, filename_prefix):
-        timestamp = datetime.now().strftime(FORMAT_TIME)
-        filename = f"{filename_prefix}{FILE_NAME_SEP}{self.config['model_image']}{FILE_NAME_SEP}{timestamp}.{FILE_IMAGE_EXT}"
-        folder = os.path.join(DIR_IMAGES)
 
-        os.makedirs(folder, exist_ok=True)
-
-        image_path = os.path.join(folder, filename)
+        filename_middle = self.config['model_image']
+        image_path = get_image_path(filename_prefix, filename_middle)
 
         try:
             generated_image = requests.get(image_url).content

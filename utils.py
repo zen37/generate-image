@@ -1,14 +1,15 @@
-import locale
 import os
 import logging
 from dotenv import load_dotenv
 import json
 import inspect
+from datetime import datetime
 
 
 from constants import (
     ENCODING, DIR_CONFIG, FILE_COMMON_CONFIG,
-    SERVICES, SERVICE_KEY_MAPPING
+    SERVICES, SERVICE_KEY_MAPPING,
+    DIR_IMAGES, FORMAT_TIME, FILE_IMAGE_EXT, FILE_NAME_SEP
 )
 
 
@@ -98,3 +99,14 @@ def load_environment_variables():
 def get_api_key(service):
     key = os.getenv(SERVICE_KEY_MAPPING[service])
     return key
+
+
+def get_image_path(filename_prefix, filename_middle):
+
+    timestamp = datetime.now().strftime(FORMAT_TIME)
+    filename = f"{filename_prefix}{FILE_NAME_SEP}{filename_middle}{FILE_NAME_SEP}{timestamp}.{FILE_IMAGE_EXT}"
+    folder = os.path.join(DIR_IMAGES)
+
+    os.makedirs(folder, exist_ok=True)
+
+    return os.path.join(folder, filename)
