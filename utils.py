@@ -101,10 +101,15 @@ def get_api_key(service):
     return key
 
 
-def get_image_path(filename_prefix, filename_middle):
-
+def construct_filename(filename_prefix, filename_middle):
     timestamp = datetime.now().strftime(FORMAT_TIME)
     filename = f"{filename_prefix}{FILE_NAME_SEP}{filename_middle}{FILE_NAME_SEP}{timestamp}.{FILE_IMAGE_EXT}"
+    return filename
+
+
+def get_image_path(filename_prefix, filename_middle):
+
+    filename = construct_filename(filename_prefix, filename_middle)
     folder = os.path.join(DIR_IMAGES)
 
     os.makedirs(folder, exist_ok=True)
