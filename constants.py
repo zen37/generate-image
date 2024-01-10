@@ -17,13 +17,8 @@ FILE_AZURE_CONFIG = "azure.json"
 #FORMAT_TIME = "%Y%m%d%H%M%S"
 FORMAT_TIME = "%Y%m%d%H%M"
 
-#text
-
-EMOJI_ENCODINGS = ('UTF-8', 'UTF-16', 'UTF-32')
-
-ENCODING = 'UTF-8'
-
-TIMEOUT_SECONDS = 10 #for calling translator resource
+# HTTP request timeout
+TIMEOUT_SECONDS = 10
 
 #images
 DIR_IMAGES = 'files/images'
