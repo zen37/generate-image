@@ -10,7 +10,7 @@ from interface import ImageInterface
 from constants import (
     IMAGE_SERVICE, DEFAULT_IMAGE_QUALITY, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_STYLE, TIMEOUT_SECONDS
 )
-from utils import get_api_key, get_image_path, display_image
+from utils import get_api_key, save_image, display_image
 
 class AzureImageService(ImageInterface):
     def __init__(self, config):
@@ -107,26 +107,12 @@ class AzureImageService(ImageInterface):
         return generated_images
 
 
-    def _save_image(self, image, filename_prefix):
-
-        filename_middle = self.config['model_image']
-        image_path = get_image_path(filename_prefix, filename_middle)
-
-        try:
-            with open(image_path, "wb") as image_file:
-                image_file.write(image)
-        except requests.RequestException as e:
-            logging.error(f"Error downloading the image: {e}")
-            return None
-
-        return image_path
-
-
     def create(self, prompt, filename_prefix):
         try:
             image = self._generate_image(prompt)
             if image:
-                image_path = self._save_image(image, filename_prefix)
+                filename_middle = self.config['model_image']
+                image_path = save_image(image, filename_prefix, filename_middle)
                 if image_path:
                     display_image(image_path)
         except Exception as e:

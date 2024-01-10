@@ -122,6 +122,20 @@ def get_image_path(filename_prefix, filename_middle):
     return os.path.join(folder, filename)
 
 
+def save_image(image, filename_prefix, filename_middle):
+
+    image_path = get_image_path(filename_prefix, filename_middle)
+
+    try:
+        with open(image_path, "wb") as image_file:
+            image_file.write(image)
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        return None
+
+    return image_path
+
+
 def display_image(image_path):
     try:
         image = Image.open(image_path)
