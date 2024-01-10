@@ -1,5 +1,7 @@
 {
     "image_service": "azure",
-    "logging_level": "INFO",
-    "logging_format": "%(asctime)s [%(levelname)s]: %(message)s"
+    "log_level": "INFO",
+    "log_dir": "logs",
+    "log_file": "log.txt",
+    "log_format": "%(asctime)s [%(levelname)s]: %(message)s"
 }

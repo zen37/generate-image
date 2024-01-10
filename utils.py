@@ -4,10 +4,12 @@ from dotenv import load_dotenv
 import json
 import inspect
 from datetime import datetime
+from PIL import Image
 
 
 from constants import (
     ENCODING, DIR_CONFIG, FILE_COMMON_CONFIG,
+    DEFAULT_LOG_DIR, DEFAULT_LOG_FILE_NAME,
     SERVICES, SERVICE_KEY_MAPPING,
     DIR_IMAGES, FORMAT_TIME, FILE_IMAGE_EXT, FILE_NAME_SEP
 )
@@ -16,17 +18,20 @@ from constants import (
 def configure_logging():
     """configures logging based on configuration"""
     config = get_config()
+    log_dir = config.get("log_dir", DEFAULT_LOG_DIR)
+    log_file = config.get("log_file", DEFAULT_LOG_FILE_NAME)
+    log_file_path = os.path.join(log_dir, log_file)
 
     handlers = [
         logging.StreamHandler(), #if config.get("logging_to_console", True) else None,
-        logging.FileHandler("logs/log.txt")  # Always add FileHandler
+        logging.FileHandler(log_file_path)  # Always add FileHandler
     ]
 
     handlers = [handler for handler in handlers if handler is not None]
 
     logging.basicConfig(
-        level=config.get("logging_level", logging.INFO),
-        format=config.get("logging_format", "%(asctime)s [%(levelname)s]: %(message)s"),
+        level=config.get("log_level", logging.INFO),
+        format=config.get("log_format", "%(asctime)s [%(levelname)s]: %(message)s"),
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=handlers
     )
@@ -115,3 +120,11 @@ def get_image_path(filename_prefix, filename_middle):
     os.makedirs(folder, exist_ok=True)
 
     return os.path.join(folder, filename)
+
+
+def display_image(image_path):
+    try:
+        image = Image.open(image_path)
+        image.show()
+    except Exception as e:
+        logging.error(f"Error opening the image: {e}")
