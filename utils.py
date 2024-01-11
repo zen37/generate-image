@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import json
 import inspect
 from datetime import datetime
+import base64
 from PIL import Image
 
 
@@ -122,13 +123,16 @@ def get_file_path(filename_prefix, filename_middle):
     return os.path.join(folder, filename)
 
 
-def save(image, filename_prefix, filename_middle):
+def save(image, filename_prefix, filename_middle, Base64encoding=None):
 
     image_path = get_file_path(filename_prefix, filename_middle)
 
     try:
         with open(image_path, "wb") as image_file:
-            image_file.write(image)
+            if Base64encoding:
+                image = image_file.write(base64.b64decode(image["base64"]))
+            else:
+                image_file.write(image)
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         return None
