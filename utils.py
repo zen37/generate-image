@@ -112,7 +112,7 @@ def construct_filename(filename_prefix, filename_middle):
     return filename
 
 
-def get_image_path(filename_prefix, filename_middle):
+def get_file_path(filename_prefix, filename_middle):
 
     filename = construct_filename(filename_prefix, filename_middle)
     folder = os.path.join(DIR_IMAGES)
@@ -122,9 +122,9 @@ def get_image_path(filename_prefix, filename_middle):
     return os.path.join(folder, filename)
 
 
-def save_image(image, filename_prefix, filename_middle):
+def save(image, filename_prefix, filename_middle):
 
-    image_path = get_image_path(filename_prefix, filename_middle)
+    image_path = get_file_path(filename_prefix, filename_middle)
 
     try:
         with open(image_path, "wb") as image_file:

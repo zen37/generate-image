@@ -6,11 +6,10 @@ import requests
 
 from openai import AzureOpenAI
 
+from constants import IMAGE_SERVICE, TIMEOUT_SECONDS
+from services.azure_constants import DEFAULT_IMAGE_QUALITY, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_STYLE
 from interface import ImageInterface
-from constants import (
-    IMAGE_SERVICE, DEFAULT_IMAGE_QUALITY, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_STYLE, TIMEOUT_SECONDS
-)
-from utils import get_api_key, save_image, display_image
+from utils import get_api_key, save, display_image
 
 class AzureImageService(ImageInterface):
     def __init__(self, config):
@@ -112,7 +111,7 @@ class AzureImageService(ImageInterface):
             image = self._generate_image(prompt)
             if image:
                 filename_middle = self.config['model_image']
-                image_path = save_image(image, filename_prefix, filename_middle)
+                image_path = save(image, filename_prefix, filename_middle)
                 if image_path:
                     display_image(image_path)
         except Exception as e:
