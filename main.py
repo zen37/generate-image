@@ -28,19 +28,25 @@ def main():
         with open(prompt_file_path, 'r') as prompt_file:
             prompt_data = json.load(prompt_file)
 
-        parser.add_argument('name', help='Name to be included in the greeting card')
-        parser.add_argument('background', nargs='+', help='Background theme for the greeting card image')
+        parser.add_argument('name', default='', nargs='?', help='Name to be included in the greeting card')
+        parser.add_argument('background', default=[], nargs='*', help='Background theme for the greeting card image')
+        parser.add_argument('-f', help='Filename')
+        parser.add_argument('-p', help='Full prompt for the image')
+
 
         args = parser.parse_args()
 
-        args = parser.parse_args()
-        #print(f"Received arguments: {args}")
+        # If -p is provided, use it; otherwise, build the prompt from the json file
+        if args.p:
+            text_prompt = args.p
+        else:
+            # Use prompt data from _prompt.json
+            text_prompt = prompt_data["text"].format(args.name, ' '.join(args.background))
+            name = args.name
 
-        # Use prompt data from _prompt.json
-        text_prompt = prompt_data["text"].format(args.name, ' '.join(args.background))
-        prefix_filename = FILE_NAME_SEP.join(args.name.split())
-        #logging.info(f"prefix_filename: {prefix_filename}")
-        #return
+        # Use the provided or generated arguments
+        prefix_filename = args.f if args.f else FILE_NAME_SEP.join(name.split())
+
         logging.info(f"prompt: {text_prompt}")
         create_image(text_prompt, prefix_filename)
 
