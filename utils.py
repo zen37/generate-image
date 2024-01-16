@@ -50,20 +50,31 @@ def log_function_call(func):
 def get_config():
     """reads common configuration file"""
     config_path = os.path.join(DIR_CONFIG, FILE_COMMON_CONFIG)
+    return _open_file(config_path)
+
+def get_config_prompt():
+    """reads prompt configuration file"""
+    config_prompt_path = os.path.join('config', '_prompt.json')
+    return _open_file(config_prompt_path )
+
+
+def _open_file(path):
+    """reads file file"""
     try:
-        with open(config_path, "r", encoding=ENCODING) as file:
-            config = json.load(file)
-        return config
+        with open(path, "r", encoding=ENCODING) as file:
+            result = json.load(file)
+
+        return result
     except FileNotFoundError as e:
-        logging.error("Configuration file not found: %s", e)
+        logging.error("File %s not found: %s", path, e)
         # You might choose to return a default configuration or raise the exception depending on your use case.
         return {}
     except json.JSONDecodeError as e:
-        logging.error("Error decoding JSON in configuration file: %s", e)
+        logging.error("Error decoding JSON in file %s : %s", path, e)
         # Handle the error, e.g., return a default configuration or raise the exception.
         return {}
     except Exception as e:
-        logging.error("Unexpected error reading configuration file: %s", e)
+        logging.error("Unexpected error reading file %s: %s", path, e)
         # Handle the error, e.g., return a default configuration or raise the exception.
         return {}
 
@@ -75,7 +86,6 @@ def get_config_service(provider):
 
     with open(config_path, "r", encoding = ENCODING) as file:
         config = json.load(file)
-
     return config
 
 
