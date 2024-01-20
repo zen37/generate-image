@@ -29,3 +29,4 @@ FILE_IMAGE_EXT  = 'png'
 #logs
 DEFAULT_LOG_DIR = 'logs'
 DEFAULT_LOG_FILE_NAME = 'log.txt'
+LOG_SEP = '|'

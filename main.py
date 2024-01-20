@@ -1,15 +1,15 @@
-import os, logging, argparse, json
+import logging, argparse
 
 from factory import get_image_instance
-from utils import configure_logging, load_environment_variables, get_config, get_config_prompt
+from utils import configure_logging, load_environment_variables, get_config, get_config_prompt, generate_unique_id
 
-from constants import FILE_NAME_SEP, ENCODING
+from constants import FILE_NAME_SEP, LOG_SEP
 
-def create_image(prompt, filename_prefix):
+def create_image(correlation_id, prompt, filename_prefix):
 
     config = get_config()
     image = get_image_instance(config)
-    image.create(prompt, filename_prefix)
+    image.create(correlation_id, prompt, filename_prefix)
 
 
 def init():
@@ -19,9 +19,9 @@ def init():
 
 def main():
     try:
+        correlation_id = generate_unique_id()
         init()
         parser = argparse.ArgumentParser(description='Create greeting card image.')
-
 
         parser.add_argument('name', default='', nargs='?', help='Name to be included in the greeting card')
         parser.add_argument('background', default=[], nargs='*', help='Background theme for the greeting card image')
@@ -40,10 +40,11 @@ def main():
             name = args.name
 
         # Use the provided or generated arguments
-        prefix_filename = args.f if args.f else FILE_NAME_SEP.join(name.split())
+        prefix = args.f if args.f else FILE_NAME_SEP.join(name.split())
+        prefix_filename = FILE_NAME_SEP.join([correlation_id, prefix])
 
-        logging.info(f"prompt: {text_prompt}")
-        create_image(text_prompt, prefix_filename)
+        logging.info(f"{correlation_id}{LOG_SEP}{text_prompt}")
+        create_image(correlation_id, text_prompt, prefix_filename)
 
     except Exception as e:
         logging.error(f"An error occurred: {str(e)}")

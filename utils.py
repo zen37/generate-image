@@ -1,8 +1,7 @@
-import os
+import os, uuid
 import logging
-from dotenv import load_dotenv
 import json
-import inspect
+#import inspect
 from datetime import datetime
 import base64
 from PIL import Image
@@ -14,6 +13,10 @@ from constants import (
     SERVICES, SERVICE_KEY_MAPPING,
     DIR_IMAGES, FORMAT_TIME, FILE_IMAGE_EXT, FILE_NAME_SEP
 )
+
+def generate_unique_id():
+    """generates unique id"""
+    return str(uuid.uuid4())
 
 
 def configure_logging():
@@ -37,7 +40,7 @@ def configure_logging():
         handlers=handlers
     )
 
-
+'''
 def log_function_call(func):
     def wrapper(*args, **kwargs):
         caller = inspect.currentframe().f_back.f_code.co_name
@@ -46,6 +49,7 @@ def log_function_call(func):
         print(f"{func.__name__} returned: {result}")
         return result
     return wrapper
+'''
 
 def get_config():
     """reads common configuration file"""
@@ -96,7 +100,7 @@ def load_environment_variables():
     for service in SERVICES:
         service_provider = config.get(service, "")
         dotenv_path = os.path.join('./env', f'{service_provider.lower()}.env')
-        logging.info('%s uses %s', service, service_provider)
+        #logging.info('%s uses %s', service, service_provider)
 
         try:
             with open(dotenv_path, encoding=ENCODING) as f:

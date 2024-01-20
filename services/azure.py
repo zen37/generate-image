@@ -2,14 +2,22 @@
 
 import logging
 import json
+import urllib3
 import requests
 
 from openai import AzureOpenAI
 
-from constants import IMAGE_SERVICE, TIMEOUT_SECONDS
+from constants import IMAGE_SERVICE, TIMEOUT_SECONDS, LOG_SEP
 from services.azure_constants import DEFAULT_IMAGE_QUALITY, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_STYLE
 from interface import ImageInterface
 from utils import get_api_key, save, display_image
+
+
+class CustomLogger(logging.Handler):
+    def emit(self, record):
+        log_message = self.format(record)
+        # Customize the log message or handle it as needed
+        print(f"Custom Log: {log_message}")
 
 class AzureImageService(ImageInterface):
     def __init__(self, config):
@@ -19,12 +27,16 @@ class AzureImageService(ImageInterface):
             api_key=get_api_key(IMAGE_SERVICE),
             azure_endpoint=self.config["endpoint"],
         )
+        # Assuming custom_logger is your custom logger instance
+        custom_logger = CustomLogger()
 
-    def _generate_image(self, prompt):
+        # Configure custom logging
+        logging.basicConfig(level=logging.INFO, handlers=[custom_logger])
+
+    def _generate_image(self, correlation_id,prompt):
         image_size = self.config.get("image_size", DEFAULT_IMAGE_SIZE)
         image_quality = self.config.get("image_quality", DEFAULT_IMAGE_QUALITY)
         image_style = self.config.get("image_style", DEFAULT_IMAGE_STYLE)
-
         try:
             result = self.client.images.generate(
                 model=self.config["model_image"],
@@ -32,9 +44,9 @@ class AzureImageService(ImageInterface):
                 n=1,
                 size=image_size,
                 quality=image_quality,
-                style=image_style
+                style=image_style,
+                extra_query={"correlation_id": correlation_id}
             )
-
             result_data = json.loads(result.model_dump_json())["data"]
             if not result_data:
                 logging.error("Unexpected response format: Missing 'data' key.")
@@ -64,7 +76,7 @@ class AzureImageService(ImageInterface):
         return generated_image
 
 
-    def _generate_images(self, prompt):
+    def _generate_images(self, correlation_id,prompt):
         image_size = self.config.get("image_size", DEFAULT_IMAGE_SIZE)
         image_quality = self.config.get("image_quality", DEFAULT_IMAGE_QUALITY)
         image_style = self.config.get("image_style", DEFAULT_IMAGE_STYLE)
@@ -106,13 +118,13 @@ class AzureImageService(ImageInterface):
         return generated_images
 
 
-    def create(self, prompt, filename_prefix):
+    def create(self, correlation_id, prompt, filename_prefix):
         try:
-            image = self._generate_image(prompt)
+            image = self._generate_image(correlation_id, prompt)
             if image:
                 filename_middle = self.config['model_image']
                 image_path = save(image, filename_prefix, filename_middle)
                 if image_path:
                     display_image(image_path)
         except Exception as e:
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"{correlation_id}{LOG_SEP}An error occurred: {e}")
